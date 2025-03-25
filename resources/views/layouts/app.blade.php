@@ -1,169 +1,124 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <title>@yield('title', 'My Laravel App')</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title', 'Sistem Management Presensi')</title>
+
     <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
     <style>
-        html,
         body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        body {
-            background: url('{{ asset('/images/background.jpg') }}') no-repeat fixed;
+        
+        .content-box {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
-
-        #app {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .icon {
-            margin: 20px auto;
-            width: 40%;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 2px solid #6c757d;
-            padding-bottom: 10px;
-        }
-
-        .icon img {
-            max-height: 100%;
-            max-width: 100%;
-        }
-
-        nav {
-            flex: 0 0 280px;
-            background-color: #343a40;
-            color: white;
-        }
-
-        .nav-link {
-            color: white;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            padding: 15px 20px;
-        }
-
-        .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            margin-bottom: 10px;
-        }
-
-        .logout {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: auto;
-            flex-direction: column;
-            width: 100%;
-            height: 20%;
-            font-size: 24px;
-            border-top: 3px solid #e3e3e3;
-        }
-
-        .logout-btn {
-            color: white;
-            background-color: #495057;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 60px;
-            border-radius: 5px;
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 0.5rem 1.5rem;
+            margin: 0 0.5rem;
             transition: all 0.3s ease;
         }
-
-        .logout-btn:hover {
-            background-color: rgb(220, 220, 220);
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+        }
+        
+        .display-4 {
+            color: #343a40;
+            margin-bottom: 1.5rem;
+        }
+        
+        .lead {
             color: #495057;
-            transform: scale(1.1);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
         }
-
-        .message {
-            font-size: 18px;
-            margin-bottom: 14px;
+        
+        /* Navbar styling */
+        .navbar-custom {
+            background-color: #343a40;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
-        nav .logo-underline {
-            width: 100%;
-            border-bottom: 3px solid #e3e3e3;
-            margin-bottom: 1rem;
+        
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
         }
     </style>
 </head>
-
 <body>
-    <div id="app">
-        @if (Route::currentRouteName() != 'home')
-            <nav class="d-flex flex-column bg-secondary">
-                <a href="#" class="icon">
-                    <img src="{{ asset('images/logo.png') }}" alt="Icon">
-                </a>
-                <div class="logo-underline"></div>
-                <ul class="nav flex-column flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('konfigurasi.index') }}">Konfigurasi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pemilik.index') }}">Pemilik</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pasar.index') }}">Pasar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('tenants.index') }}">Tenant</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('riwayat_pemilikan.index') }}">Riwayat Pemilikan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('riwayat_iuran.index') }}">Riwayat Iuran</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pengelola.index') }}">Pengelola</a>
-                    </li>
-                    {{-- @auth --}}
-                    <li class="nav-item mt-auto logout">
-                        <p class="message">Welcome, {{ Auth::user()->name }}</p>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-darl logout-btn">Logout</button>
-                        </form>
-                    </li>
-                    {{-- @endauth --}}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('home') }}">
+                <i class="fas fa-fingerprint me-2"></i>PresensiKu
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('logout') }}" 
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">
+                                <i class="fas fa-user-plus me-1"></i> Register
+                            </a>
+                        </li>
+                    @endauth
                 </ul>
-            </nav>
-        @endif
-
-        <div class="content p-4">
-            @yield('content')
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Main Content -->
+    <main>
+        @yield('content')
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; {{ date('Y') }} Sistem Management Presensi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

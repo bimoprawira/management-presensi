@@ -1,169 +1,49 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>@yield('title', 'My Laravel App')</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: url('{{ asset('/images/background.jpg') }}') no-repeat fixed;
-        }
-
-        #app {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .icon {
-            margin: 20px auto;
-            width: 40%;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 2px solid #6c757d;
-            padding-bottom: 10px;
-        }
-
-        .icon img {
-            max-height: 100%;
-            max-width: 100%;
-        }
-
-        nav {
-            flex: 0 0 280px;
-            background-color: #343a40;
-            color: white;
-        }
-
-        .nav-link {
-            color: white;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            padding: 15px 20px;
-        }
-
-        .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            margin-bottom: 10px;
-        }
-
-        .logout {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: auto;
-            flex-direction: column;
-            width: 100%;
-            height: 20%;
-            font-size: 24px;
-            border-top: 3px solid #e3e3e3;
-        }
-
-        .logout-btn {
-            color: white;
-            background-color: #495057;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 60px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: rgb(220, 220, 220);
-            color: #495057;
-            transform: scale(1.1);
-        }
-
-        .message {
-            font-size: 18px;
-            margin-bottom: 14px;
-        }
-
-        nav .logo-underline {
-            width: 100%;
-            border-bottom: 3px solid #e3e3e3;
-            margin-bottom: 1rem;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'HR Presence Management')</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
-<body>
-    <div id="app">
-        @if (Route::currentRouteName() != 'home')
-            <nav class="d-flex flex-column bg-secondary">
-                <a href="#" class="icon">
-                    <img src="{{ asset('images/logo.png') }}" alt="Icon">
-                </a>
-                <div class="logo-underline"></div>
-                <ul class="nav flex-column flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('konfigurasi.index') }}">Konfigurasi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pemilik.index') }}">Pemilik</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pasar.index') }}">Pasar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('tenants.index') }}">Tenant</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('riwayat_pemilikan.index') }}">Riwayat Pemilikan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('riwayat_iuran.index') }}">Riwayat Iuran</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pengelola.index') }}">Pengelola</a>
-                    </li>
-                    {{-- @auth --}}
-                    <li class="nav-item mt-auto logout">
-                        <p class="message">Welcome, {{ Auth::user()->name }}</p>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-darl logout-btn">Logout</button>
-                        </form>
-                    </li>
-                    {{-- @endauth --}}
-                </ul>
-            </nav>
-        @endif
-
-        <div class="content p-4">
+<body class="bg-gray-100 font-sans relative">
+    
+    @auth
+    <!-- Logout Button -->
+    <div class="absolute top-4 right-4">
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+        <button 
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md">
+            Logout
+        </button>
+    </div>
+    @endauth
+    
+    <div id="app" class="flex min-h-screen">
+        @auth
+        <!-- Sidebar -->
+        <div class="w-64 bg-gradient-to-b from-blue-500 to-cyan-400 text-white shadow-lg flex flex-col">
+            <div class="p-6 text-center border-b border-white/20">
+                <img src="{{ asset('images/logo.png') }}"class="mx-auto w-24 h-24 rounded-full border-4 border-white">
+                <h5 class="mt-3 text-lg font-semibold">HR Presence</h5>
+            </div>
+        </div>
+        @endauth
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
             @yield('content')
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
-
 </html>

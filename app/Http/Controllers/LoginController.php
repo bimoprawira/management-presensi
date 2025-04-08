@@ -1,11 +1,11 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
- 
+
 class LoginController extends Controller
 {
     public function index()
@@ -18,19 +18,27 @@ class LoginController extends Controller
     /**
      * Handle an authentication attempt.
      */
-    public function authenticate(Request $request)
+    // app/Http/Controllers/LoginController.php
+
+    // app/Http/Controllers/LoginController.php
+public function authenticate(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->route('dashboard'); // Pastikan redirect ke dashboard
+    }
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah',
+    ]);
+}
+    protected function authenticated(Request $request, $user)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email:dns',
-            'password' => 'required'
-        ]);
- 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
- 
-            return redirect()->intended('home');
-        }
- 
-        return back()->with('loginError', 'Login gagal!');
+        return redirect()->route('dashboard');
     }
 }

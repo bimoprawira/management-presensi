@@ -10,12 +10,9 @@
                 <div class="card-body">
                     <h3>Welcome, {{ $user->name }}!</h3>
                     <p>Email: {{ $user->email }}</p>
-                    
-                    {{-- Tombol logout --}}
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Logout</button>
-                    </form>
+                    @if ($user->role === 'admin')
+                        <p>Halo, kamu adalah admin.</p>
+                    @endif
                 </div>
             </div>
         </div>

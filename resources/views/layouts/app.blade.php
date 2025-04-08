@@ -10,21 +10,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 font-sans relative">
-    
+
     @auth
     <!-- Logout Button -->
     <div class="absolute top-4 right-4">
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
         </form>
-        <button 
-            onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+        <button
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
             class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md">
             Logout
         </button>
     </div>
     @endauth
-    
+
     <div id="app" class="flex min-h-screen">
         @auth
         <!-- Sidebar -->
@@ -35,7 +35,7 @@
             </div>
         </div>
         @endauth
-        
+
         <!-- Main Content -->
         <div class="flex-1 p-6">
             @yield('content')

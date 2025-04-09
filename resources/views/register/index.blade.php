@@ -17,7 +17,7 @@
                         <h2 class="text-2xl text-gray-900 font-bold">Register</h2>
                     </div>
                     <div class="p-6">
-                        <form action="/register" method="POST">
+                        <form action="/register" method="POST" id="registerForm">
                             @csrf
                             <div class="mb-4">
                                 <label for="name" class="block text-gray-900">Username</label>
@@ -46,18 +46,23 @@
                                 @error('password') border-red-500 @enderror"
                                     id="password" required>
                                 @error('password')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">
+                                        Password harus mengandung minimal 8 karakter, 
+                                        1 huruf besar, 1 huruf kecil, dan 1 simbol
+                                    </span>
                                 @enderror
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Password harus mengandung minimal 8 karakter, 1 huruf besar, dan 1 simbol
+                                </p>
                             </div>
                             <div class="mb-4">
                                 <label for="password_confirmation" class="block text-gray-900">Confirm Password</label>
                                 <input type="password" name="password_confirmation"
-                                    class="w-full px-4 py-2 border rounded-lg text-gray-900
-                                @error('password_confirmation') border-red-500 @enderror"
+                                    class="w-full px-4 py-2 border rounded-lg text-gray-900"
                                     id="password_confirmation" required>
-                                @error('password_confirmation')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
+                                <div id="passwordMatchError" class="hidden text-red-500 text-sm mt-1">
+                                    Password tidak cocok!
+                                </div>
                             </div>
                             <button type="submit"
                                 class="w-full bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg">Register</button>
@@ -70,6 +75,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('password_confirmation');
+            const passwordMatchError = document.getElementById('passwordMatchError');
+            const registerForm = document.getElementById('registerForm');
+
+            function checkPasswordMatch() {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    confirmPasswordInput.classList.add('border-red-500');
+                    passwordMatchError.classList.remove('hidden');
+                    return false;
+                } else {
+                    confirmPasswordInput.classList.remove('border-red-500');
+                    passwordMatchError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            // Real-time validation
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            passwordInput.addEventListener('input', checkPasswordMatch);
+
+            // Form submission validation (Form tidak bisa di submit jika ada yang salah pada register)
+            registerForm.addEventListener('submit', function(event) {
+                if (!checkPasswordMatch()) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

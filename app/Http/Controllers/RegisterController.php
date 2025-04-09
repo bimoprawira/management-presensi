@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
 {
@@ -21,7 +22,13 @@ class RegisterController extends Controller
         $validatedData = $request->validate([
             'name' => ['required', 'min:3', 'max:255', 'unique:users'],
             'email' => 'required|email:dns|unique:users',
-            'password' => 'required|min:5|max:255'
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase() // Memerlukan huruf besar dan kecil
+                    ->symbols()    // Memerlukan minimal 1 simbol
+            ],
         ]);
 
         // Hash the password before saving

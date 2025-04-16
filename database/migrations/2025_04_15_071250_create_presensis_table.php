@@ -6,27 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('presensis', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('tanggal');
+            $table->string('status');
+            $table->text('geolokasi');
             $table->time('time_clock_in')->nullable();
             $table->time('time_clock_out')->nullable();
-            $table->date('tanggal');
-            $table->enum('status', ['sehat', 'sakit', 'izin']);
-            $table->string('geolokasi');
             $table->timestamps();
+            
+            $table->unique(['user_id', 'tanggal']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('presensis');
     }

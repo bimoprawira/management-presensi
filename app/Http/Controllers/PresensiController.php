@@ -4,63 +4,60 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Presensi;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PresensiController extends Controller
 {
     public function form()
     {
-        return view('presensi');
+        $userId = Auth::id();
+        $presensis = Presensi::where('user_id', $userId)->orderBy('tanggal', 'desc')->get();
+        return view('presensi', compact('presensis'));
     }
 
     public function store(Request $request)
-    {
-        \Log::info('Form Data:', $request->all());
-        dd($request->all());
+{
+    $validated = $request->validate([
+        'tanggal' => 'required|date',
+        'status' => 'required|string',
+        'geolokasi' => 'nullable|string',
+        'type' => 'required|in:masuk,keluar',
+        'time_clock_in' => 'nullable',
+        'time_clock_out' => 'nullable',
+    ]);
 
-        // Cek apakah form yang disubmit mengarah ke controller
-        dd('Form is submitted!');
+    $userId = Auth::id();
 
-        $validated = $request->validate([
-            'presensi_id' => 'required',
-            'tanggal' => 'required|date',
-            'status' => 'required|in:sehat,sakit,izin',
-            'geolokasi' => 'required',
-            'type' => 'required|in:masuk,keluar',
-            'time_clock_in' => 'required_if:type,masuk|nullable|date_format:H:i:s',
-            'time_clock_out' => 'required_if:type,keluar|nullable|date_format:H:i:s',
-        ]);
+    $presensi = Presensi::firstOrNew([
+        'user_id' => $userId,
+        'tanggal' => $validated['tanggal'],
+    ]);
 
-        \Log::info('Validated data:', $validated);
-
-        $userId = auth()->id();
-        \Log::info('User ID: ' . $userId);
-
-        // Cek apakah user sudah presensi di tanggal ini
-        $presensi = Presensi::where('user_id', $userId)
-                            ->where('tanggal', $validated['tanggal'])
-                            ->first();
-
-        // Kalau belum ada presensi untuk tanggal ini, buat baru
-        if (!$presensi) {
-            $presensi = new Presensi();
-            $presensi->id = $validated['presensi_id'];
-            $presensi->user_id = $userId;
-            $presensi->tanggal = $validated['tanggal'];
-            $presensi->status = $validated['status'];
-            $presensi->geolokasi = $validated['geolokasi'];
-        }
-
-        // Isi clock in atau clock out
-        if ($request->type === 'masuk' && !$presensi->time_clock_in) {
-            $presensi->time_clock_in = $request->time_clock_in;
-        } elseif ($request->type === 'keluar' && !$presensi->time_clock_out) {
-            $presensi->time_clock_out = $request->time_clock_out;
-        }
-
-        \Log::info('Presensi data before save:', $presensi->toArray());
-        $presensi->save();
-
-        return redirect()->route('dashboard')->with('success', 'Presensi berhasil disimpan.');
+    if (!$presensi->exists) {
+        $presensi->id = Str::uuid(); // UUID dibuat di server
     }
+
+    $presensi->status = $validated['status'];
+    $presensi->geolokasi = $validated['geolokasi'];
+
+    if ($validated['type'] === 'masuk' && isset($validated['time_clock_in'])) {
+        $presensi->time_clock_in = $validated['time_clock_in'];
+    } elseif ($validated['type'] === 'keluar' && isset($validated['time_clock_out'])) {
+        $presensi->time_clock_out = $validated['time_clock_out'];
+    }
+
+    $presensi->save();
+
+    return redirect()->route('dashboard')->with('success', 'Presensi berhasil disimpan.');
+}
+    public function logPresensi()
+    {
+        $user = Auth::user();
+        $presensis = Presensi::where('user_id', $user->id)->orderBy('tanggal', 'desc')->get();
+
+        return view('log-presensi', compact('presensis', 'user'));
+    }
+
 }

@@ -23,7 +23,7 @@
                     <a href="{{ route('presensi.form') }}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition mr-2">
                         <i class="fas fa-arrow-right mr-2"></i> Presensi
                     </a>
-                    <a href="#" class="inline-flex items-center bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition">
+                    <a href="{{ route('log-presensi') }}" class="inline-flex items-center bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition">
                         <i class="fas fa-list mr-2"></i> Log Presensi
                     </a>
                 </div>

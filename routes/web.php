@@ -29,8 +29,12 @@ Route::post('/logout', function () {
 // Dashboard (Protected)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    //presensi
     Route::get('/presensi', [PresensiController::class, 'form'])->name('presensi.form');
     Route::post('/presensi', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::get('/presensi/test-database', [PresensiController::class, 'testDatabase']);
+    //log presensi
+    Route::get('/log-presensi', [PresensiController::class, 'logPresensi'])->name('log-presensi');
     // Tidak ada route konfigurasi di sini
 
 });

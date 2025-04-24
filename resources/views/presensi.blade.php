@@ -31,12 +31,17 @@
             <h3 class="text-xl font-semibold mb-4 text-center text-white">Form Presensi</h3>
 
             <form id="presensiForm" action="{{ route('presensi.store') }}" method="POST" class="space-y-6 text-sm">
+                @if(session('error'))
+                    <div class="mt-4 text-red-400 text-sm text-center">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 @csrf
                 <input type="hidden" name="presensi_id" id="presensi_id">
                 <input type="hidden" name="tanggal" id="tanggal">
                 <input type="hidden" name="geolokasi" id="geolokasi">
                 <input type="hidden" name="type" id="type">
-            
+
                 <div>
                     <label for="status" class="block text-gray-300 font-medium mb-2">Status Hari Ini</label>
                     <select name="status" id="status" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
@@ -45,23 +50,24 @@
                         <option value="izin" class="bg-gray-700">Izin</option>
                     </select>
                 </div>
-            
+
                 <div id="loadingLocation" class="text-xs text-gray-400 italic">
                     Mengambil lokasi...
                 </div>
-            
+
                 <div class="pt-2 text-right">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-500 transition text-white px-6 py-2 rounded-xl font-semibold shadow-md">
                         Simpan Presensi
                     </button>
                 </div>
             </form>
-            
+
         </div>
     </div>
 </div>
 
 <script>
+    const todayPresensi = {!! json_encode($todayPresensi) !!};
     function uuidv4() {
         return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -69,9 +75,27 @@
     }
 
     function openModal(type) {
-        document.getElementById('presensiModal').classList.remove('hidden');
         const now = new Date();
-        document.getElementById('tanggal').value = now.toISOString().split('T')[0];
+        const todayDate = now.toISOString().split('T')[0];
+
+        if (type === 'masuk' && todayPresensi && todayPresensi.time_clock_in) {
+            alert("Kamu sudah melakukan presensi masuk hari ini.");
+            return;
+        }
+
+        if (type === 'keluar') {
+            if (!todayPresensi || !todayPresensi.time_clock_in) {
+                alert("Kamu belum melakukan presensi masuk hari ini.");
+                return;
+            }
+            if (todayPresensi.time_clock_out) {
+                alert("Kamu sudah melakukan presensi keluar hari ini.");
+                return;
+            }
+        }
+
+        document.getElementById('presensiModal').classList.remove('hidden');
+        document.getElementById('tanggal').value = todayDate;
         document.getElementById('presensi_id').value = uuidv4();
         document.getElementById('type').value = type;
         document.getElementById('loadingLocation').innerText = 'Mengambil lokasi...';

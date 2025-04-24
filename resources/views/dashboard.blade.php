@@ -17,22 +17,14 @@
             <div class="bg-gray-700 p-4 rounded">
                 <p class="text-sm">Sisa Cuti</p>
                 <div class="bg-gray-700 p-4 rounded-xl mt-6">
-                    
-                    <canvas id="kehadiranChart" height="100"></canvas>
                 </div>
-                
-                <h3 class="text-2xl font-bold">4 Hari</h3>
+                <h3 class="text-2xl font-bold mt-6">{{ $sisaCuti }} Hari</h3>
             </div>
             <div class="bg-gray-700 mt-4 p-4 rounded">
                 <p class="text-sm">Gaji Lembur</p>
                 <h3 class="text-2xl font-bold text-white">Rp {{ number_format($gajiLembur, 0, ',', '.') }}</h3>
             </div>
             
-        </div>
-
-        <div class="bg-gray-700 mt-6 p-4 rounded">
-            <h3 class="text-lg font-semibold mb-2">Pengumuman</h3>
-            <p class="text-gray-300">Libur nasional tanggal 1 Mei 2025 (Hari Buruh). Tetap semangat bekerja 💪</p>
         </div>
     </div>
 @endsection

@@ -7,6 +7,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\DataKaryawanController;
+use App\Http\Controllers\CutiController;
 
 // Homepage
 Route::get('/', function () {
@@ -31,13 +32,19 @@ Route::post('/logout', function () {
 // Dashboard (Protected)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     //presensi
     Route::get('/presensi', [PresensiController::class, 'form'])->name('presensi.form');
     Route::post('/presensi', [PresensiController::class, 'store'])->name('presensi.store');
     Route::get('/presensi/test-database', [PresensiController::class, 'testDatabase']);
+
     //log presensi
     Route::get('/log-presensi', [PresensiController::class, 'log'])->name('log-presensi');
     Route::get('/log-presensi', [PresensiController::class, 'logPresensi'])->name('log-presensi');
+
+    //cuti
+    Route::get('/cuti', [CutiController::class, 'index'])->name('cuti');
+    Route::post('/cuti/ajukan', [CutiController::class, 'store'])->name('cuti.ajukan');
 
     // Tidak ada route konfigurasi di sini
 
@@ -49,6 +56,9 @@ Route::middleware('auth')->group(function () {
     })->name('cutikaryawan');
 
 });
+
+
+
 
 // // Admin admin aja
 // Route::get('/datakaryawan', function () {

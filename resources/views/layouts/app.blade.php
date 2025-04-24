@@ -45,7 +45,7 @@
                 <a href="{{ route('presensi.form') }}" class="block text-white font-semibold hover:underline">Presensi</a>
                 
                 {{-- Belum aktif --}}
-                <span class="block text-white font-semibold opacity-50 cursor-not-allowed">Cuti</span>
+                <a href="{{ route('cuti') }}" class="block text-white font-semibold hover:underline">Cuti</a>
                 <span class="block text-white font-semibold opacity-50 cursor-not-allowed">Gaji</span>
                 <span class="block text-white font-semibold opacity-50 cursor-not-allowed">Profil</span>
             </div>

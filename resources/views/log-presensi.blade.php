@@ -3,7 +3,17 @@
 @section('content')
 <div class="max-w-4xl mx-auto mt-10">
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-lg font-semibold mb-4 text-center">Riwayat Presensi</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-center w-full">Riwayat Presensi</h3>
+        </div>
+
+        {{-- Tombol Kembali --}}
+        <div class="mb-4">
+            <a href="{{ route('dashboard') }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition">
+                ← Kembali ke Dashboard
+            </a>
+        </div>
+
         @if($presensis->count())
             <table class="w-full table-auto text-left border">
                 <thead>

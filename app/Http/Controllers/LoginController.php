@@ -21,24 +21,30 @@ class LoginController extends Controller
     // app/Http/Controllers/LoginController.php
 
     // app/Http/Controllers/LoginController.php
-public function authenticate(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
-
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->route('dashboard'); // Pastikan redirect ke dashboard
-    }
-
-    return back()->withErrors([
-        'email' => 'Email atau password salah',
-    ]);
-}
-    protected function authenticated(Request $request, $user)
+    public function authenticate(Request $request)
     {
-        return redirect()->route('dashboard');
+        $credentials = $request->validate([
+            'login' => ['required', 'string'], // Field 'login' bisa berisi email atau username
+            'password' => ['required'],
+        ]);
+    
+        // Cek apakah input adalah email atau username
+        $loginType = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+    
+        // Gabungkan credentials untuk attempt
+        $authCredentials = [
+            $loginType => $credentials['login'],
+            'password' => $credentials['password'],
+        ];
+    
+        if (Auth::attempt($authCredentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('dashboard');
+        }
+    
+        return back()->withErrors([
+            'login' => 'Email atau Password salah', // Pesan error
+        ]);
     }
+    
 }

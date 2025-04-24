@@ -50,7 +50,7 @@ class PresensiController extends Controller
 
     $presensi->save();
 
-    return redirect()->route('dashboard')->with('success', 'Presensi berhasil disimpan.');
+    return redirect()->route('log-presensi')->with('success', 'Presensi berhasil disimpan.');
 }
     public function logPresensi()
     {

@@ -2,46 +2,62 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto mt-10">
-    <div class="bg-white p-6 rounded-lg shadow-md text-center mb-8">
-        <h2 class="text-xl font-bold mb-4">Presensi Hari Ini</h2>
-        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow">
-            Presensi Disini
-        </button>
+    <div class="bg-gray-700 p-6 rounded-2xl shadow-md text-center relative border border-gray-200">
+
+        {{-- Log Presensi link pindah ke pojok kanan --}}
+        <div class="absolute top-4 right-4">
+            <a href="{{ route('log-presensi') }}" class="inline-block bg-gray-100 hover:bg-gray-200 text-sm text-gray-800 px-4 py-2 rounded-md transition shadow-sm">
+                Log Presensi →
+            </a>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-100 mb-6">Presensi Hari Ini</h2>
+
+        {{-- Dua tombol langsung membuka modal --}}
+        <div class="flex justify-center space-x-4">
+            <button onclick="openModal('masuk')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold shadow">
+                Presensi Masuk
+            </button>
+            <button onclick="openModal('keluar')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow">
+                Presensi Keluar
+            </button>
+        </div>
     </div>
 
-<!-- Modal -->
-<div id="presensiModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
-        <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-600 hover:text-black text-2xl font-bold">&times;</button>
-        <h3 class="text-lg font-semibold mb-4">Form Presensi</h3>
+    {{-- Modal Presensi --}}
+    <div id="presensiModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 w-full max-w-lg p-6 rounded-2xl shadow-xl relative border border-gray-600">
+            <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-300 hover:text-white text-2xl font-bold">&times;</button>
+            <h3 class="text-xl font-semibold mb-4 text-center text-white">Form Presensi</h3>
 
-        <form id="presensiForm" action="{{ route('presensi.store') }}" method="POST">
-            @csrf
-            <input type="hidden" name="presensi_id" id="presensi_id">
-            <input type="hidden" name="tanggal" id="tanggal">
-            <input type="hidden" name="geolokasi" id="geolokasi">
-            <input type="hidden" name="type" id="type">
-
-            <div class="mb-4 text-left">
-                <label for="status" class="block font-medium mb-1">Status</label>
-                <select name="status" id="status" class="w-full border border-gray-300 rounded px-3 py-2">
-                    <option value="sehat">Sehat</option>
-                    <option value="sakit">Sakit</option>
-                    <option value="izin">Izin</option>
-                </select>
-            </div>
-
-            <div class="text-sm text-gray-500 mb-4" id="loadingLocation">Mengambil lokasi...</div>
-
-            <div class="flex space-x-4">
-                <button type="button" onclick="submitPresensi('masuk')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full">
-                    Presensi Masuk
-                </button>
-                <button type="button" onclick="submitPresensi('keluar')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full">
-                    Presensi Keluar
-                </button>
-            </div>
-        </form>
+            <form id="presensiForm" action="{{ route('presensi.store') }}" method="POST" class="space-y-6 text-sm">
+                @csrf
+                <input type="hidden" name="presensi_id" id="presensi_id">
+                <input type="hidden" name="tanggal" id="tanggal">
+                <input type="hidden" name="geolokasi" id="geolokasi">
+                <input type="hidden" name="type" id="type">
+            
+                <div>
+                    <label for="status" class="block text-gray-300 font-medium mb-2">Status Hari Ini</label>
+                    <select name="status" id="status" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+                        <option value="sehat" class="bg-gray-700">Sehat</option>
+                        <option value="sakit" class="bg-gray-700">Sakit</option>
+                        <option value="izin" class="bg-gray-700">Izin</option>
+                    </select>
+                </div>
+            
+                <div id="loadingLocation" class="text-xs text-gray-400 italic">
+                    Mengambil lokasi...
+                </div>
+            
+                <div class="pt-2 text-right">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 transition text-white px-6 py-2 rounded-xl font-semibold shadow-md">
+                        Simpan Presensi
+                    </button>
+                </div>
+            </form>
+            
+        </div>
     </div>
 </div>
 
@@ -52,12 +68,23 @@
         );
     }
 
-    function openModal() {
+    function openModal(type) {
         document.getElementById('presensiModal').classList.remove('hidden');
         const now = new Date();
         document.getElementById('tanggal').value = now.toISOString().split('T')[0];
         document.getElementById('presensi_id').value = uuidv4();
+        document.getElementById('type').value = type;
         document.getElementById('loadingLocation').innerText = 'Mengambil lokasi...';
+
+        document.querySelectorAll('input[name="time_clock_in"], input[name="time_clock_out"]').forEach(el => el.remove());
+
+        const time = now.toTimeString().split(':').slice(0, 2).join(':');
+        const inputName = type === 'masuk' ? 'time_clock_in' : 'time_clock_out';
+        const timeInput = document.createElement('input');
+        timeInput.type = 'hidden';
+        timeInput.name = inputName;
+        timeInput.value = time;
+        document.getElementById('presensiForm').appendChild(timeInput);
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -76,25 +103,6 @@
 
     function closeModal() {
         document.getElementById('presensiModal').classList.add('hidden');
-    }
-
-    function submitPresensi(type) {
-        document.getElementById('type').value = type;
-
-        const now = new Date();
-        const time = now.toTimeString().split(':').slice(0, 2).join(':');
-
-        const inputName = type === 'masuk' ? 'time_clock_in' : 'time_clock_out';
-
-        document.querySelectorAll('input[name="time_clock_in"], input[name="time_clock_out"]').forEach(el => el.remove());
-
-        const timeInput = document.createElement('input');
-        timeInput.type = 'hidden';
-        timeInput.name = inputName;
-        timeInput.value = time;
-        document.getElementById('presensiForm').appendChild(timeInput);
-
-        document.getElementById('presensiForm').submit();
     }
 </script>
 @endsection

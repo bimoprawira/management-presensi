@@ -67,7 +67,7 @@
                     <h3 class="text-lg font-semibold">Manage Data Karyawan</h3>
                 </div>
                 <div class="mt-auto">
-                    <a href="#" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">
+                    <a href="{{ route('datakaryawan') }}" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">
                         <i class="fas fa-arrow-right mr-2"></i> Lihat
                     </a>
                 </div>

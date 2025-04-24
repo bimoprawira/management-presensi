@@ -18,18 +18,7 @@
 </head>
 <body class="bg-gray-800 font-sans min-h-screen flex items-center justify-center">
 
-    @auth
-    <div class="absolute top-4 right-4">
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-            @csrf
-        </form>
-        <button 
-            onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
-            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md transition">
-            Logout
-        </button>
-    </div>
-    @endauth
+    
 
     <div class=" text-center fade-in">
         <img src="{{ asset('https://png.pngtree.com/png-vector/20240724/ourmid/pngtree-cute-little-baby-capybara-being-sweet-png-image_12942220.png') }}" alt="Logo" class="mx-auto w-24 h-24 rounded-full mb-6 shadow-lg">
